@@ -1,36 +1,167 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeLeaf.org">
 <head>
     <meta charset="UTF-8">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="/js/main.js"></script>
+    <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <title>Users</title>
 </head>
 <body>
-<div th:switch="${users}">
-    <h2 th:case="null">No users found!</h2>
-    <div th:case="*">
-        <h2>Users</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Email</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="user : ${users}">
-                <td th:text="${user.id}"></td>
-                <td th:text="${user.name}"></td>
-                <td th:text="${user.age}"></td>
-                <td th:text="${user.email}"></td>
-                <td><a th:href="@{/admin/user-update/{id}(id=${user.id})}">Edit</a></td>
-                <td><a th:href="@{/admin/user-delete/{id}(id=${user.id})}">Delete</a></td>
-            </tr>
-            </tbody>
-        </table>
+
+<div class="container">
+    <caption>
+        <a id="modal-858232" href="#modal-container-858232" role="button" class="btn btn-success" data-toggle="modal">Create user</a>
+    </caption>
+    <div class="card">
+        <div class="card-block">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Email</th>
+                </tr>
+
+                </thead>
+                <tbody>
+                <tr th:each="user :${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.name}"></td>
+                    <td th:text="${user.age}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td>
+                        <a class="btn btn-primary eBtn" th:href="@{admin/findOne/(id=${user.id})}">Edit</a>
+                        <a class="btn btn-danger delBtn" th:href="@{admin/user-delete/{id}(id=${user.id})}">Delete</a>
+                    </td>
+
+
+                </tr>
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
     </div>
-    <p><a href="/admin/user-create">Create user</a></p>
+    <div class="myForm">
+        <form action="#" method="post" th:action="@{/admin/user-update}" th:object="${user}">
+            <div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade"
+                 id="exampleModal" role="dialog"
+                 tabindex="-1">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Update</h5>
+                            <button aria-label="Close" class="close" data-dismiss="modal"
+                                    type="button">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-grop">
+                                <label class="col-form-label" for="id">ID:</label>
+                                <input class="form-control" id="id" name="id" readonlytype="number" value="" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-form-label" for="name">Name:</label>
+                                <input class="form-control" id="name" name="name" type="text" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label" for="age">AGE:</label>
+                                <input class="form-control" id="age" name="age" type="number" value=""/>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label" for="email">Email:</label>
+                                <input class="form-control" id="email" name="email" type="text" value=""/>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" data-dismiss="modal"
+                                    type="button">Close
+                            </button>
+                            <input class="btn btn-primary" type="submit" value="update"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal fade" id="modal-container-858232" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <form action="#" method="post" th:action="@{/admin/user-create}" th:object="${user}">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel1">
+                        Create user
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label class="col-form-label" for="name2">Name:</label>
+                        <input class="form-control" id="name2" name="name" type="text" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label" for="age3">AGE:</label>
+                        <input class="form-control" id="age3" name="age" type="number" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label" for="email4">Email:</label>
+                        <input class="form-control" id="email4" name="email" type="text" value=""/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal"
+                            type="button">Close
+                    </button>
+                    <input class="btn btn-primary" type="submit" value="save"/>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+    <div aria-hidden="true" aria-labelledby="myModalLabel" class="modal fade" id="myModal"
+         role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Delete Record</h5>
+                    <button aria-label="Close" class="close" data-dismiss="modal"
+                            type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="alert alert-danger">
+                        Are you sure you want to delete?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal"
+                            type="button">Close
+                    </button>
+                    <a class="btn btn-danger" href="" id="delRef">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
 </body>
 </html>

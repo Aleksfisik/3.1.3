@@ -12,33 +12,63 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService implements UserDetailsService{
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    @Transactional(readOnly = true)
+    public List<User> index() {
+
+        return entityManager.createQuery("from User", User.class).getResultList();
+    }
+
     public User findById(Long id){
         return userRepository.getOne(id);
     }
-
-    public List<User> findAll(){
-        return userRepository.findAll();
+    @Transactional(readOnly = true)
+    public User show(Long id) {
+        return entityManager.find(User.class, id);
     }
-
-    public User savePerson(User user){
+    public User saveUser(User user){
         return userRepository.save(user);
     }
+    @Transactional
+    public void save(User person) {
+        entityManager.persist(person);
+        entityManager.flush();
+    }
 
-    public void deleteById(Long id){
-        userRepository.deleteById(id);
+    @Transactional
+    public void update(Long id, User updatedPerson) {
+        entityManager.find(User.class, id);
+        entityManager.merge(updatedPerson);
+        entityManager.flush();
+    }
+
+    public User readPerson(Long id) {
+        return entityManager.find(User.class, id);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        User user = readPerson(id);
+        entityManager.remove(user);
+        entityManager.flush();
+
     }
 
     public User findByName(String name) {
@@ -49,7 +79,7 @@ public class UserService implements UserDetailsService{
     @Transactional
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         User user = findByName(name);
-        if(user == null) {
+        if (user == null) {
             throw new UsernameNotFoundException(String.format("User '%s' not found", name));
         }
         return new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(),
